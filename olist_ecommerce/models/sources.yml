@@ -1,0 +1,15 @@
+version: 2
+
+sources:
+  - name: ecommerce_dw
+    database: theta-sunlight-491314-n8
+    tables:
+      - name: orders
+      - name: products
+      - name: customers
+      - name: order_items
+      - name: payments
+      - name: reviews
+      - name: sellers
+      - name: geolocation
+      - name: category_translation
