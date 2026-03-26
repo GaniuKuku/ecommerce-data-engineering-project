@@ -2,13 +2,22 @@
 
 End-to-End Modern Data Stack using GCP, BigQuery, dbt & Looker Studio
 
+## 🏗️ Architecture Diagram
 
-🛒 Olist Brazilian E-Commerce: End-to-End Modern Data Stack
+![Architecture](assets/stack_arch.png)
 
-📌 1. Project Overview & Business Value
-The Olist dataset is a complex, multi-table snapshot of 100k Brazilian e-commerce orders. The raw data contains fragmentation, localization dependencies (Portuguese categories), and granularity mismatches (multiple items per order).
+## 📌 Project Overview
 
-My primary objective was to build a secure, cost-optimized, and single-source-of-truth Data Warehouse in BigQuery, using dbt to manage the transformation lifecycle. This pipeline transforms raw CSVs into an analytical Star Schema designed to answer executive questions on revenue growth, delivery performance, and customer lifetime value (LTV).
+The Olist dataset represents a real-world Brazilian e-commerce platform with over 100k orders across multiple interconnected tables.
+
+This project builds a scalable **Modern Data Stack** that transforms raw, messy CSV data into a clean, analytics-ready **Star Schema** in BigQuery.
+
+The goal is to enable business stakeholders to answer key questions around:
+- Revenue growth 📈
+- Customer lifetime value (LTV) 👤
+- Delivery performance 🚚
+
+All transformations are managed using **dbt**, ensuring modular, testable, and production-ready data pipelines.
 
 🛠️ The Tech Stack
 Infrastructure: Google Cloud Platform (GCP)
@@ -23,6 +32,20 @@ Version Control & CI/CD: GitHub Codespaces
 
 Business Intelligence: Looker Studio
 
+## 🚀 Key Achievements
+
+- Built a full end-to-end data pipeline (Kaggle → GCS → BigQuery → dbt → BI)
+- Designed a **Star Schema** for analytics
+- Solved **data duplication (revenue explosion)** using aggregation
+- Implemented **incremental models**, reducing compute cost by >90%
+- Enforced **data quality with dbt tests**
+- Created business-ready marts for dashboards
+
+## 🔄 dbt Lineage (Medallion Architecture)
+
+![dbt-lineage](assets/dbt-dag(1).png)
+
+  
 🏗️ 2. High-Level Modern Data Stack Architecture
 This diagram conceptualizes the "Modern Data Stack" approach. It shows how I separated Storage (raw data in a lake), Compute (transforming data inside the warehouse), and Transformation Logic (dbt). This architecture ensures scalability and reduces "Lock-In" dependencies.
 
