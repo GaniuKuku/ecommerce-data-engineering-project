@@ -1,0 +1,19 @@
+version: 2
+
+models:
+  - name: fct_orders
+    description: "The central fact table for all e-commerce orders, joined with aggregated items and payments."
+    columns:
+      - name: order_id
+        description: "Primary key of the orders table."
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: "Foreign key to stg_customers."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+              to: ref('stg_customers')
+              field: customer_id

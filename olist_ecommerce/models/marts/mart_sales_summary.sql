@@ -1,3 +1,7 @@
+-- mart_sales_summary.sql
+-- This model aggregates revenue, order counts, and Average Order Value (AOV) 
+-- at a monthly grain for high-level business performance tracking.
+
 SELECT
     DATE_TRUNC(order_purchase_timestamp, MONTH) AS order_month,
     COUNT(order_id) AS total_orders,
