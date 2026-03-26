@@ -43,7 +43,7 @@ Business Intelligence: Looker Studio
 
 ## 🔄 dbt Lineage (Medallion Architecture)
 
-![dbt-lineage](assets/dbt-dag(1).png)
+![dbt-lineage](assets/dbt-dag.png)
 
   
 🏗️ 2. High-Level Modern Data Stack Architecture
