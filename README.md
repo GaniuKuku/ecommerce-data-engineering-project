@@ -1,3 +1,8 @@
+# 🛒 Olist E-Commerce Data Engineering Project
+
+End-to-End Modern Data Stack using GCP, BigQuery, dbt & Looker Studio
+
+
 🛒 Olist Brazilian E-Commerce: End-to-End Modern Data Stack
 
 📌 1. Project Overview & Business Value
