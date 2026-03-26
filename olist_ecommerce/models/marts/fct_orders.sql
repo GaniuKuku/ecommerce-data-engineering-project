@@ -1,5 +1,17 @@
+{{
+    config(
+        materialized='incremental',
+        unique_key='order_id'
+    )
+}}
+
 WITH orders AS (
     SELECT * FROM {{ ref('stg_orders') }}
+    
+    {% if is_incremental() %}
+        -- Only grab orders that happened AFTER the latest order currently in this table
+        WHERE order_purchase_timestamp > (SELECT MAX(order_purchase_timestamp) FROM {{ this }})
+    {% endif %}
 ),
 
 order_items AS (
@@ -22,7 +34,7 @@ SELECT
     o.order_delivered_customer_date,
     o.order_estimated_delivery_date,
     
-    -- Item Metrics (Replacing nulls with 0 in case an order had no items recorded)
+    -- Item Metrics
     COALESCE(i.total_items_in_order, 0) AS total_items,
     COALESCE(i.total_item_value, 0) AS total_item_value,
     COALESCE(i.total_freight_value, 0) AS total_freight_value,
