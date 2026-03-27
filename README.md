@@ -124,9 +124,49 @@ Automated dbt tests enforce strict data contracts before visualization:
 
 ---
 
-## 🚀 How to Run this Project
+🚀 How to Run this Project
+1. Clone the repository
 
-**1. Clone the repository**
-```bash
+Bash
 git clone [https://github.com/YOUR_USERNAME/ecommerce-data-engineering-project.git](https://github.com/YOUR_USERNAME/ecommerce-data-engineering-project.git)
 cd ecommerce-data-engineering-project
+2. Provision Cloud Infrastructure
+Ensure you have GCP credentials configured in your environment, then run:
+
+Bash
+cd terraform
+terraform init
+terraform apply
+3. Run the Data Pipeline
+Install dependencies and execute the Prefect orchestrator to move data from local CSVs → GCS → BigQuery → dbt:
+
+Bash
+pip install -r requirements.txt
+python orchestrate.py
+4. View the Pipeline DAG
+Spin up the Prefect UI to view the task execution graph:
+
+Bash
+prefect server start
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
