@@ -34,6 +34,54 @@ All transformations are managed using **dbt**, ensuring modular, testable, and p
 
 🔗 Live Dashboard: [View on Looker Studio](https://lookerstudio.google.com/reporting/a8f06a74-485c-45e9-9554-3c5b36d7746e)
 
+## 🧠 Key Insights & Business Recommendations
+
+### 1. The "One-and-Done" Retention Crisis 🚨
+**Insight:**  
+Out of 93,358 customers, 93,333 made only one purchase.
+
+**Impact:**  
+Customer Lifetime Value (LTV) is extremely low and revenue depends heavily on acquiring new users.
+
+**Recommendation:**  
+Introduce loyalty programs, second-purchase discounts, and email retargeting campaigns.
+
+---
+
+### 2. Logistics is a Major Strength 🚚
+**Insight:**  
+91.9% of orders are delivered on time or early.
+
+**Impact:**  
+Strong operational reliability builds customer trust and competitive advantage.
+
+**Recommendation:**  
+Promote fast and reliable delivery as a key marketing message.
+
+---
+
+### 3. Home & Personal Care Dominate Sales 🛋️
+**Insight:**  
+Top categories: bed_bath_table, health_beauty, computers_accessories.
+
+**Impact:**  
+Revenue is concentrated in lifestyle and home-related products.
+
+**Recommendation:**  
+Prioritize these categories in inventory, ads, and homepage placement.
+
+---
+
+### 4. Low-Ticket, Single-Item Buying Behavior 🛒
+**Insight:**  
+AOV = $159.85, average items per order = 1.14.
+
+**Impact:**  
+Customers rarely buy multiple items, limiting revenue per transaction.
+
+**Recommendation:**  
+Introduce bundle offers, “frequently bought together,” and free shipping thresholds.
+
 ## 🚀 Key Achievements
 
 - Built a full end-to-end data pipeline (Kaggle → GCS → BigQuery → dbt → BI)
