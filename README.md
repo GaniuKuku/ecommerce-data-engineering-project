@@ -28,6 +28,12 @@ All transformations are managed using **dbt**, ensuring modular, testable, and p
 - Version Control & CI/CD: GitHub Codespaces
 - Business Intelligence: Looker Studio
 
+  ## 📊 Dashboard
+
+![Dashboard](assets/dashboard.jpg)
+
+🔗 Live Dashboard: [View on Looker Studio](https://lookerstudio.google.com/reporting/a8f06a74-485c-45e9-9554-3c5b36d7746e)
+
 ## 🚀 Key Achievements
 
 - Built a full end-to-end data pipeline (Kaggle → GCS → BigQuery → dbt → BI)
