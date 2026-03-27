@@ -129,7 +129,7 @@ Automated dbt tests enforce strict data contracts before visualization:
 **1. Clone the repository**
 
 ```bash
-git clone [https://github.com/YOUR_USERNAME/ecommerce-data-engineering-project.git](https://github.com/YOUR_USERNAME/ecommerce-data-engineering-project.git)
+git clone https://github.com/YOUR_USERNAME/ecommerce-data-engineering-project.git
 cd ecommerce-data-engineering-project
 ```
 
