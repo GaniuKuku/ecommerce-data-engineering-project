@@ -3,13 +3,16 @@
 -- for use in dashboard headers/scorecards.
 
 SELECT
-    SUM(total_payment_value) AS lifetime_revenue,
-    COUNT(DISTINCT order_id) AS total_orders,
-    SUM(total_payment_value) / COUNT(DISTINCT order_id) AS avg_order_value,
-    COUNT(DISTINCT customer_id) AS total_unique_customers,
+    SUM(f.total_payment_value) AS lifetime_revenue,
+    COUNT(DISTINCT f.order_id) AS total_orders,
+    SUM(f.total_payment_value) / COUNT(DISTINCT f.order_id) AS avg_order_value,
     
-    -- Calculating the average items per order
-    SUM(total_items) / COUNT(DISTINCT order_id) AS avg_items_per_order
+    -- Here is the fix: Counting the TRUE unique human ID
+    COUNT(DISTINCT c.customer_unique_id) AS total_unique_customers,
+    
+    SUM(f.total_items) / COUNT(DISTINCT f.order_id) AS avg_items_per_order
 
-FROM {{ ref('fct_orders') }}
-WHERE order_status = 'delivered'
+FROM {{ ref('fct_orders') }} f
+LEFT JOIN {{ ref('stg_customers') }} c 
+    ON f.customer_id = c.customer_id
+WHERE f.order_status = 'delivered'

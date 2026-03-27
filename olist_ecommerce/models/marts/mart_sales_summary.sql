@@ -9,6 +9,6 @@ SELECT
     -- Average Order Value (AOV)
     SUM(total_payment_value) / NULLIF(COUNT(order_id), 0) AS avg_order_value
 FROM {{ ref('fct_orders') }}
-WHERE order_status != 'canceled'
+WHERE order_status = 'delivered'
 GROUP BY 1
 ORDER BY 1 DESC
