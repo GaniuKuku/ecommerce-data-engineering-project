@@ -1,7 +1,13 @@
 {{
     config(
         materialized='incremental',
-        unique_key='order_id'
+        unique_key='order_id',
+        partition_by={
+          "field": "order_purchase_timestamp",
+          "data_type": "timestamp",
+          "granularity": "month"
+        },
+        cluster_by = "customer_id"
     )
 }}
 
