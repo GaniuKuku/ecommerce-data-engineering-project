@@ -19,18 +19,14 @@ The goal is to enable business stakeholders to answer key questions around:
 
 All transformations are managed using **dbt**, ensuring modular, testable, and production-ready data pipelines.
 
-🛠️ The Tech Stack
-Infrastructure: Google Cloud Platform (GCP)
+## 🛠️ Tech Stack
 
-Data Lake (Storage): Google Cloud Storage (GCS)
-
-Data Warehouse: BigQuery
-
-Transformation Layer: dbt (data build tool)
-
-Version Control & CI/CD: GitHub Codespaces
-
-Business Intelligence: Looker Studio
+- Infrastructure: Google Cloud Platform (GCP)
+- Data Lake (Storage): Google Cloud Storage (GCS)
+- Data Warehouse: BigQuery
+- Transformation Layer: dbt (data build tool)
+- Version Control & CI/CD: GitHub Codespaces
+- Business Intelligence: Looker Studio
 
 ## 🚀 Key Achievements
 
@@ -41,18 +37,18 @@ Business Intelligence: Looker Studio
 - Enforced **data quality with dbt tests**
 - Created business-ready marts for dashboards
 
-## 🔄 2. dbt Lineage (Medallion Architecture)
+## 🔄 dbt Lineage (Medallion Architecture)
 
 ![dbt-lineage](assets/dbt-dag.png)
 
 
-## 🏗️ 3. Physical dbt Pipeline: The Medallion Approach
+## 🏗️ Physical dbt Pipeline: The Medallion Approach
 
 The core transformation logic in dbt follows a rigid, three-layer approach. The standard ref() function is used to build a non-brittle, maintainable pipeline that always runs in the correct order.
 
 This diagram is the visual blueprint of the project. It shows how the data is handled at each layer of the transformation lifecycle.
 
-### 3.1. Bronze Layer (Staging)
+### Bronze Layer (Staging)
 
 Focus: Data Sanitization & Refactoring
 
@@ -65,7 +61,7 @@ Raw tables are converted into dependable, cleanly cast foundations.
 
 ---
 
-### 3.2. Silver Layer (Intermediate & Fact)
+### Silver Layer (Intermediate & Fact)
 
 Focus: Granularity Alignment & Integrity
 
@@ -77,7 +73,7 @@ The Fact Table: fct_orders is constructed by joining the sanitized stg_orders wi
 
 ---
 
-### 3.3. Gold Layer (Business Marts)
+### Gold Layer (Business Marts)
 
 Focus: Presentation & Business Value
 
@@ -90,7 +86,7 @@ The Gold layer contains specialized, highly-aggregated tables designed for high-
 
 ---
 
-## 🛡️ 4. Cost-Optimization (Incremental Models)
+## 🛡️ Cost-Optimization (Incremental Models)
 
 The Olist dataset contains the large geolocation table (over 1M rows) and a growing orders fact table.
 
@@ -106,7 +102,7 @@ This visual illustrates how dbt filters for new timestamps during incremental ru
 
 ---
 
-## 🛡️ 5. Data Quality & Referential Integrity
+## 🛡️ Data Quality & Referential Integrity
 
 To transform this into a professional data platform, I implemented automated dbt tests to enforce strict data contracts.
 
@@ -114,6 +110,6 @@ To transform this into a professional data platform, I implemented automated dbt
 
 - Relationship Tests: Applied relationship (foreign key) tests. If dbt attempts to add an order to the Fact table that does not have a corresponding customer ID in the DIM_CUSTOMERS table, the test will FAIL. This guarantees 0% "orphan" records.
 
-- Pass Rate: Verified that all tests pass successfully before the final visualization step.n all unique, not_null, and relationships constraints.
+- Pass Rate: Verified that all tests pass successfully before the final visualization step.
 
 Generated Documentation: Run dbt docs generate && dbt docs serve to view the comprehensive data catalog and lineage graph.
