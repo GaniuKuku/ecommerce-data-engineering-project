@@ -98,8 +98,6 @@ To optimize BigQuery compute and network costs, I implemented Incremental Materi
 
 - The Impact: Reduced data processed per subsequent run by over 90%, ensuring a sustainable and scalable cloud warehouse infrastructure.
 
-This visual illustrates how dbt filters for new timestamps during incremental runs:
-
 ---
 
 ## 🛡️ Data Quality & Referential Integrity
