@@ -90,15 +90,7 @@ The Gold layer contains specialized, highly-aggregated tables designed for high-
 
 ---
 
-## 📉 4. Data Warehousing Star Schema Design
-
-To enable intuitive and fast BI reporting, the pipeline transforms the raw tables into a proper analytical warehouse model. The architecture features a central Fact Table surrounded by supporting Dimension Tables.
-
-The design above is formalized into this clean warehouse schematic, which is exactly how a BI tool like Looker reads the resulting dataset.
-
----
-
-## 🛡️ 5. Cost-Optimization (Incremental Models)
+## 🛡️ 4. Cost-Optimization (Incremental Models)
 
 The Olist dataset contains the large geolocation table (over 1M rows) and a growing orders fact table.
 
@@ -114,7 +106,7 @@ This visual illustrates how dbt filters for new timestamps during incremental ru
 
 ---
 
-## 🛡️ 6. Data Quality & Referential Integrity
+## 🛡️ 5. Data Quality & Referential Integrity
 
 To transform this into a professional data platform, I implemented automated dbt tests to enforce strict data contracts.
 
