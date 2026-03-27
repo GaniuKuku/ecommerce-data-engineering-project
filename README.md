@@ -22,7 +22,7 @@ Enable stakeholders to answer key business questions regarding:
 
 ## 🏗️ Architecture & Orchestration
 
-![Architecture](assets/stack_arch.png)
+![Architecture](assets/arch_flow.png)
 
 ### ⚙️ Workflow Orchestration (Prefect DAG)
 The pipeline is fully automated using **Prefect** as the workflow orchestrator. 
@@ -30,7 +30,7 @@ The pipeline is fully automated using **Prefect** as the workflow orchestrator.
 * **Fault Tolerance:** Tasks are configured with automated retries (`retries=2`) to gracefully handle transient cloud network API timeouts.
 * **Observability:** Utilizes Prefect's native logger for capturing detailed execution states and dbt compilation logs.
 
-![Prefect Orchestration DAG](assets/prefect-dag.png)
+![Prefect Orchestration DAG](assets/DAG.png)
 
 ---
 
