@@ -11,6 +11,11 @@
 ![Looker](https://img.shields.io/badge/Looker%20Studio-Dashboard-4285F4?style=for-the-badge&logo=looker&logoColor=white)
 ![GitHub Codespaces](https://img.shields.io/badge/Codespaces-Environment-181717?style=for-the-badge&logo=github&logoColor=white)
 
+## 📝 Featured Article
+[![Medium](https://img.shields.io/badge/Medium-Read%20the%20Article-black?style=for-the-badge&logo=medium&logoColor=white)](https://medium.com/@ganiukuku/i-built-a-production-grade-data-pipeline-on-gcp-and-a-single-join-almost-blew-up-15-million-in-c0d4e3688e1e)
+
+*"How a single LEFT JOIN silently inflated $15M in revenue — and how I fixed it."*
+
 ## 💼 What This Project Demonstrates
 - End-to-end pipeline design on GCP
 - Infrastructure as Code with Terraform
