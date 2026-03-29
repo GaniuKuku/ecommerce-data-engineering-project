@@ -28,13 +28,13 @@
 
 This project utilizes the **[Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)**, sourced from Kaggle. 
 
-The data consists of over 100,000 anonymized orders placed between 2016 and 2018 across multiple marketplaces in Brazil. It includes multiple relational tables covering customers, orders, items, products, payments, and geographic locations. The high dimensionality and real-world messiness of this data (such as differing levels of granularity) made it the perfect candidate for building a robust Medallion architecture and practicing complex data modeling.
+The data consists of nearly 100,000 anonymized orders placed between 2016 and 2018 across multiple marketplaces in Brazil. It includes multiple relational tables covering customers, orders, items, products, payments, and geographic locations. The high dimensionality and real-world messiness of this data (such as differing levels of granularity) made it the perfect candidate for building a robust Medallion architecture and practicing complex data modeling.
 
 ---
 
 ## 📌 Project Overview
 
-The Olist dataset represents a real-world Brazilian e-commerce platform with over 100k orders across multiple interconnected tables.
+The Olist dataset represents a real-world Brazilian e-commerce platform with nearly 100k orders across multiple interconnected tables.
 
 This project builds a **production-style end-to-end data pipeline** that ingests raw CSV data, stores it in a cloud data lake, loads it into a data warehouse, and transforms it into an analytics-ready **Star Schema**. 
 
