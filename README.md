@@ -11,6 +11,14 @@
 ![Looker](https://img.shields.io/badge/Looker%20Studio-Dashboard-4285F4?style=for-the-badge&logo=looker&logoColor=white)
 ![GitHub Codespaces](https://img.shields.io/badge/Codespaces-Environment-181717?style=for-the-badge&logo=github&logoColor=white)
 
+## 💼 What This Project Demonstrates
+- End-to-end pipeline design on GCP
+- Infrastructure as Code with Terraform
+- Workflow orchestration with Prefect
+- Data modeling with dbt (Medallion Architecture)
+- Debugging real-world data integrity issues
+- Cost and performance optimization in BigQuery
+
 ## 📊 About the Dataset
 
 This project utilizes the **[Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)**, sourced from Kaggle. 
