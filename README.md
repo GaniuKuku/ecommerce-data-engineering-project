@@ -152,12 +152,28 @@ Automated dbt tests enforce strict data contracts before visualization:
 
 ---
 
+## 🙏 Acknowledgements
+This project was inspired by the 
+[DataTalks.Club Data Engineering Zoomcamp](https://github.com/DataTalksClub/data-engineering-zoomcamp) 
+— a free, project-based bootcamp for aspiring data engineers.
+
+---
+
+## 📋 Prerequisites
+- Google Cloud Platform account with billing enabled
+- Kaggle account + API key (to download the dataset)
+- Python 3.11+
+- Terraform installed
+- Prefect installed
+
+---
+
 ## 🚀 How to Run this Project
 
 **1. Clone the repository**
 
 ```bash
-git clone https://github.com/Ganiukuku/ecommerce-data-engineering-project.git
+git clone https://github.com/GaniuKuku/ecommerce-data-engineering-project.git
 cd ecommerce-data-engineering-project
 ```
 
