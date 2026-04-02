@@ -17,7 +17,7 @@
 
 **"How a single LEFT JOIN silently inflated $15M in revenue — and how I fixed it."**
 
-[![Medium](https://img.shields.io/badge/Medium-Cost%20Audit-black?style=for-the-badge&logo=medium&logoColor=white)]((https://medium.com/@ganiukuku/i-built-a-data-pipeline-on-gcp-and-did-a-cost-audit-heres-what-i-found-65362ed883cf))
+[![Medium](https://img.shields.io/badge/Medium-Cost%20Audit-black?style=for-the-badge&logo=medium&logoColor=white)](https://medium.com/@ganiukuku/i-built-a-data-pipeline-on-gcp-and-did-a-cost-audit-heres-what-i-found-65362ed883cf)
 
 **"I audited my GCP data pipeline costs to uncover hidden inefficiencies and understand where the money was going."**
 
