@@ -158,7 +158,7 @@ Automated dbt tests enforce strict data contracts before visualization:
 ---
 
 ## 🙏 Acknowledgements
-This project was inspired by the 
+This project was submitted as capstone project to 
 [DataTalks.Club Data Engineering Zoomcamp](https://github.com/DataTalksClub/data-engineering-zoomcamp) 
 — a free, project-based bootcamp for aspiring data engineers.
 
