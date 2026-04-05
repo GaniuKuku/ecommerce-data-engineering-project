@@ -1,0 +1,52 @@
+name: CI Pipeline - Terraform & dbt
+
+# 1. When does this run? Every time someone opens a Pull Request to main.
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  # 2. The Terraform Job
+  terraform-plan:
+    name: 'Terraform Plan Check'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./terraform # Tells it to look in your terraform folder
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: Setup HashiCorp Terraform
+        uses: hashicorp/setup-terraform@v3
+        
+      - name: Terraform Init
+        run: terraform init
+        
+      - name: Terraform Plan
+        run: terraform plan
+
+  # 3. The dbt Job
+  dbt-compile:
+    name: 'dbt Syntax Check'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./olist_ecommerce # Tells it to look in your dbt folder
+        
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          
+      - name: Install dbt-bigquery
+        run: pip install dbt-bigquery
+        
+      - name: Run dbt Compile
+        run: dbt compile
