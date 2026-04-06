@@ -1,21 +1,21 @@
 from google.cloud import bigquery
 
 # -------- CONFIG --------
-PROJECT_ID = "theta-sunlight-491314-n8"  # <-- replace with your GCP project ID
+PROJECT_ID = "theta-sunlight-491314-n8"  
 DATASET = "ecommerce_dw"
 BUCKET = "ecommerce-datalake-gk"
 
-# Mapping of BigQuery tables to GCS files
+# Mapping using the wildcard (*.csv) to grab ALL files in the folder
 TABLES = {
-    "orders": "raw/orders/olist_orders_dataset.csv",
-    "customers": "raw/customer/olist_customers_dataset.csv",
-    "order_items": "raw/order_items/olist_order_items_dataset.csv",
-    "payments": "raw/payments/olist_order_payments_dataset.csv",
-    "reviews": "raw/reviews/olist_order_reviews_dataset.csv",
-    "products": "raw/products/olist_products_dataset.csv",
-    "sellers": "raw/sellers/olist_sellers_dataset.csv",
-    "geolocation": "raw/geolocation/olist_geolocation_dataset.csv",
-    "category_translation": "raw/category_translation/product_category_name_translation.csv"
+    "orders": "raw/orders/*.csv",
+    "customers": "raw/customer/*.csv",
+    "order_items": "raw/order_items/*.csv",
+    "payments": "raw/payments/*.csv",
+    "reviews": "raw/reviews/*.csv",
+    "products": "raw/products/*.csv",
+    "sellers": "raw/sellers/*.csv",
+    "geolocation": "raw/geolocation/*.csv",
+    "category_translation": "raw/category_translation/*.csv"
 }
 
 # -------- MAIN FUNCTION --------

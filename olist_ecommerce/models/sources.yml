@@ -3,13 +3,62 @@ version: 2
 sources:
   - name: ecommerce_dw
     database: theta-sunlight-491314-n8
+    description: "Raw Olist e-commerce data ingested from GCS data lake via Prefect wildcard batch load."
+    
+    # --- FRESHNESS  
+  
+    # Note: Since Olist is historical data not updated so freshness checks are not needed.
+    
+    
+    # freshness:
+    #   warn_after: {count: 12, period: hour}
+    #   error_after: {count: 24, period: hour}
+
     tables:
       - name: orders
-      - name: products
-      - name: customers
+        description: "Raw orders table containing order status and lifecycle timestamps."
+        # loaded_at_field: order_purchase_timestamp  <-- Used for the freshness check above
+        columns:
+          - name: order_id
+            description: "Primary key for the order."
+            tests:
+              - unique
+              - not_null
+          - name: customer_id
+            description: "Foreign key linking to the customers table."
+
       - name: order_items
+        description: "Individual line items and shipping costs per order."
+        columns:
+          - name: order_id
+            tests:
+              - not_null
+
       - name: payments
+        description: "Transaction records detailing payment methods and installment values."
+        columns:
+          - name: order_id
+            tests:
+              - not_null
+
+      - name: products
+        description: "Raw product catalog including dimensions and weight."
+        columns:
+          - name: product_id
+            tests:
+              - not_null
+
+      - name: customers
+        description: "Raw customer demographic and location data."
+      
       - name: reviews
+        description: "Customer satisfaction reviews and written feedback."
+      
       - name: sellers
+        description: "Seller demographic and location data."
+      
       - name: geolocation
+        description: "Brazilian zip code prefix mapping to latitude and longitude coordinates."
+      
       - name: category_translation
+        description: "Static seed table mapping Portuguese product categories to English."

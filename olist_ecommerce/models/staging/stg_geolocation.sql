@@ -6,11 +6,16 @@
 }}
 
 WITH raw_geo AS (
-    SELECT * FROM {{ source('ecommerce_dw', 'geolocation') }}
+    SELECT 
+        geolocation_zip_code_prefix,
+        geolocation_lat,
+        geolocation_lng,
+        geolocation_city,
+        geolocation_state
+    FROM {{ source('ecommerce_dw', 'geolocation') }}
     
     {% if is_incremental() %}
         -- This only runs on the 2nd, 3rd, 4th runs...
-        -- It tells dbt: "Only grab zip codes I haven't processed yet"
         WHERE geolocation_zip_code_prefix NOT IN (SELECT zip_code FROM {{ this }})
     {% endif %}
 )

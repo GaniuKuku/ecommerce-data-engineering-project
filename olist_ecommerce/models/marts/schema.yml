@@ -15,5 +15,5 @@ models:
           - not_null
           - relationships:
               arguments:
-              to: ref('stg_customers')
-              field: customer_id
+                to: ref('stg_customers')
+                field: customer_id

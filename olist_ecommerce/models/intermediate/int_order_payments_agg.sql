@@ -1,5 +1,9 @@
 WITH order_payments AS (
-    SELECT * FROM {{ source('ecommerce_dw', 'payments') }}
+    SELECT 
+        order_id,
+        payment_sequential,
+        payment_value
+    FROM {{ ref('stg_order_payments') }}
 )
 
 SELECT
