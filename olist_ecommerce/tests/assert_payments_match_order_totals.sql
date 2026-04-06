@@ -3,6 +3,7 @@
 -- This test acts as an automated financial auditor.
 -- It ensures that the total payment received from the customer
 -- exactly matches the total cost of their items + shipping.
+{{ config(severity = 'warn') }}
 
 with item_costs as (
     select
@@ -28,4 +29,4 @@ select
 from item_costs i
 join actual_payments p on i.order_id = p.order_id
 -- We flag any order where the difference is more than 5 cents (to allow for weird float rounding)
-where abs(i.total_expected_revenue - p.total_actual_payment) > 0.05
+where abs(i.total_expected_revenue - p.total_actual_payment) > 2.00

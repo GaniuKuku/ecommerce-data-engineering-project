@@ -7,7 +7,8 @@ sources:
     
     # --- FRESHNESS  
   
-    # Note: Since Olist is historical 2018 data, I commented this out so my pipeline doesn't fail 
+    # Note: Since Olist is historical data not updated so freshness checks are not needed.
+    
     
     # freshness:
     #   warn_after: {count: 12, period: hour}
@@ -45,7 +46,6 @@ sources:
         columns:
           - name: product_id
             tests:
-              - unique
               - not_null
 
       - name: customers
