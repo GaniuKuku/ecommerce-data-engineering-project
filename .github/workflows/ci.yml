@@ -32,7 +32,13 @@ jobs:
         run: terraform init
         
       - name: Terraform Plan
-        run: terraform plan
+        run: terraform plan -input=false
+        env:
+          TF_VAR_project_id: "theta-sunlight-491314-n8"
+          TF_VAR_region: "us-central1"
+          TF_VAR_bucket_name: "ecommerce-datalake-gk"
+          TF_VAR_dataset_id: "ecommerce_dw"
+          TF_VAR_is_development: true
 
   # 3. The dbt Job
   dbt-compile:
