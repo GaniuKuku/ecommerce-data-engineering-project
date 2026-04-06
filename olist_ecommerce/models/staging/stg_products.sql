@@ -1,8 +1,18 @@
 WITH raw_products AS (
-    SELECT * FROM {{ source('ecommerce_dw', 'products') }}
+    SELECT 
+        product_id,
+        product_category_name,
+        product_name_lenght,
+        product_description_lenght,
+        product_photos_qty,
+        product_weight_g,
+        product_length_cm,
+        product_height_cm,
+        product_width_cm
+    FROM {{ source('ecommerce_dw', 'products') }}
 ),
 
--- 1. Clean the Products BEFORE the join
+-- 1. Cleans the Products BEFORE the join
 clean_products AS (
     SELECT * FROM (
         SELECT 
@@ -13,7 +23,7 @@ clean_products AS (
     WHERE row_num = 1
 ),
 
--- 2. Clean the Translations BEFORE the join
+-- 2. Cleans the Translations BEFORE the join
 clean_translations AS (
     SELECT * FROM (
         SELECT 

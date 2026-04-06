@@ -12,7 +12,16 @@
 }}
 
 WITH orders AS (
-    SELECT * FROM {{ ref('stg_orders') }}
+    SELECT 
+        order_id,
+        customer_id,
+        order_status,
+        order_purchase_timestamp,
+        order_approved_at,
+        order_delivered_carrier_date,
+        order_delivered_customer_date,
+        order_estimated_delivery_date
+    FROM {{ ref('stg_orders') }}
     
     {% if is_incremental() %}
         -- Only grab orders that happened AFTER the latest order currently in this table
@@ -21,11 +30,20 @@ WITH orders AS (
 ),
 
 order_items AS (
-    SELECT * FROM {{ ref('int_order_items_agg') }}
+    SELECT 
+        order_id, 
+        total_items_in_order, 
+        total_item_value, 
+        total_freight_value
+    FROM {{ ref('int_order_items_agg') }}
 ),
 
 order_payments AS (
-    SELECT * FROM {{ ref('int_order_payments_agg') }}
+    SELECT 
+        order_id, 
+        total_payment_methods_used, 
+        total_payment_value
+    FROM {{ ref('int_order_payments_agg') }}
 )
 
 SELECT

@@ -1,14 +1,24 @@
 WITH orders AS (
-    SELECT * FROM {{ ref('fct_orders') }}
+    SELECT 
+        order_id, 
+        total_payment_value
+    FROM {{ ref('fct_orders') }}
 ),
 
--- We need this "bridge" to get the product_id for each order
+-- Use the Staging model here, NEVER the raw source!
 items AS (
-    SELECT * FROM {{ source('ecommerce_dw', 'order_items') }}
+    SELECT 
+        order_id, 
+        product_id, 
+        price
+    FROM {{ ref('stg_order_items') }}
 ),
 
 products AS (
-    SELECT * FROM {{ ref('stg_products') }}
+    SELECT 
+        product_id, 
+        category_name_english
+    FROM {{ ref('stg_products') }}
 )
 
 SELECT

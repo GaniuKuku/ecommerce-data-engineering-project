@@ -1,5 +1,10 @@
 WITH order_items AS (
-    SELECT * FROM {{ source('ecommerce_dw', 'order_items') }}
+    SELECT 
+        order_id,
+        order_item_id,
+        price,
+        freight_value
+    FROM {{ ref('stg_order_items') }}
 )
 
 SELECT
