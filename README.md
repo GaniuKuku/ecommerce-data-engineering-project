@@ -153,7 +153,7 @@ The central `fct_orders` table was physically optimized in the data warehouse.
 ## 🛡️ Data Quality & Testing
 Automated dbt tests enforce strict data contracts before visualization:
 - **Schema Tests:** `unique` and `not_null` constraints deployed on all primary keys.
-- **Referential Integrity:** Applied relationship (foreign key) tests to ensure 0% "orphan" records between fact and dimension tables.
+- **Referential Integrity:** Applied relationship (foreign key) tests to ensure 0% "orphan" records between fact and dimension tables...
 
 ---
 
