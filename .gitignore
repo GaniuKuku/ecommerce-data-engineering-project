@@ -235,3 +235,5 @@ override.tf.json
 
 *.tfstate
 *.tfstate.*
+
+query_log.sql
