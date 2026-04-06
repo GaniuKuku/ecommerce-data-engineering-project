@@ -1,0 +1,9 @@
+ecommerce_dw:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: oauth
+      project: theta-sunlight-491314-n8
+      dataset: ecommerce_dw
+      threads: 4

@@ -13,11 +13,17 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./terraform # Tells it to look in your terraform folder
+        working-directory: ./terraform 
     
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+
+      # 🔐 AUTHENTICATE TERRAFORM ROBOT
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
       
       - name: Setup HashiCorp Terraform
         uses: hashicorp/setup-terraform@v3
@@ -34,11 +40,17 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./olist_ecommerce # Tells it to look in your dbt folder
+        working-directory: ./olist_ecommerce 
         
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+
+      # 🔐 AUTHENTICATE DBT ROBOT
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
         
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -49,4 +61,4 @@ jobs:
         run: pip install dbt-bigquery
         
       - name: Run dbt Compile
-        run: dbt compile
+        run: dbt compile --profiles-dir .
