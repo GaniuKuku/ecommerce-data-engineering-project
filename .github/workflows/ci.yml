@@ -1,13 +1,15 @@
 name: CI Pipeline - Terraform & dbt
 
-# 1. When does this run? Every time someone opens a Pull Request to main.
+# Only runs on Pull Requests to main (Dev -> PR workflow)
 on:
   pull_request:
     branches:
       - main
 
 jobs:
-  # 2. The Terraform Job
+  
+  # JOB 1: TERRAFORM INFRASTRUCTURE CHECK
+  
   terraform-plan:
     name: 'Terraform Plan Check'
     runs-on: ubuntu-latest
@@ -19,7 +21,6 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # 🔐 AUTHENTICATE TERRAFORM ROBOT
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
@@ -32,17 +33,22 @@ jobs:
         run: terraform init
         
       - name: Terraform Plan
+        # Enforces the plan and fails the action if it crashes.
         run: terraform plan -input=false
         env:
-          TF_VAR_project_id: "theta-sunlight-491314-n8"
-          TF_VAR_region: "us-central1"
-          TF_VAR_bucket_name: "ecommerce-datalake-gk"
-          TF_VAR_dataset_id: "ecommerce_dw"
+          # Dynamic Variables instead of Hardcoded Strings!
+          TF_VAR_project_id: ${{ vars.GCP_PROJECT_ID }}
+          TF_VAR_region: ${{ vars.GCP_REGION }}
+          TF_VAR_bucket_name: ${{ vars.GCP_BUCKET_NAME }}
+          TF_VAR_dataset_id: ${{ vars.GCP_DATASET_ID }}
           TF_VAR_is_development: true
 
-  # 3. The dbt Job
-  dbt-compile:
-    name: 'dbt Syntax Check'
+  
+  # JOB 2: DBT DATA QUALITY CHECK
+  
+  dbt-test:
+    name: 'dbt Build & Test'
+    needs: terraform-plan # Forces dbt to wait for Terraform!
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -52,7 +58,6 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # 🔐 AUTHENTICATE DBT ROBOT
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
@@ -62,9 +67,11 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+          cache: 'pip' # Caches Python packages to speed up the pipeline
           
       - name: Install dbt-bigquery
         run: pip install dbt-bigquery
         
-      - name: Run dbt Compile
-        run: dbt compile --profiles-dir .
+      - name: Run dbt Build
+        # Builds the tables and runs your financial tests!
+        run: dbt build --profiles-dir . --target dev
