@@ -1,49 +1,78 @@
-# 🛒 Olist E-Commerce Data Engineering Project
+# 🛒 Olist E-Commerce Data Engineering Project (v2.0 - Production Architecture)
 
-**End-to-End Modern Data Stack using GCP, Terraform, Prefect, BigQuery, dbt & Looker Studio**
+**📌 Version Notice:** This is the `main` branch representing Version 2, focusing on serverless cloud deployment, automated CI/CD pipelines, hardened code standards, and infrastructure security.  
+*To view the original local Proof-of-Concept, check out the `[Version 1 Archive](https://github.com/GaniuKuku/ecommerce-data-engineering-project/tree/archive-v1)` branch.*
+
+**Serverless Modern Data Stack using GCP, Cloud Run, Terraform, Prefect Cloud, BigQuery, dbt, GitHub Actions & Looker Studio**
 
 ![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![GCP](https://img.shields.io/badge/GCP-Cloud-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white)
+![Google Cloud Run](https://img.shields.io/badge/Cloud_Run-Serverless-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white)
+![Terraform](https://img.shields.io/badge/Terraform-IaC-7B42BC?style=for-the-badge&logo=terraform&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Containerization-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-CI/CD-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)
 ![BigQuery](https://img.shields.io/badge/BigQuery-Data%20Warehouse-4285F4?style=for-the-badge&logo=googlebigquery&logoColor=white)
 ![dbt](https://img.shields.io/badge/dbt-Transformations-FF694B?style=for-the-badge&logo=dbt&logoColor=white)
-![Terraform](https://img.shields.io/badge/Terraform-IaC-7B42BC?style=for-the-badge&logo=terraform&logoColor=white)
 ![Prefect](https://img.shields.io/badge/Prefect-Orchestration-070E10?style=for-the-badge&logo=prefect&logoColor=white)
 ![Looker](https://img.shields.io/badge/Looker%20Studio-Dashboard-4285F4?style=for-the-badge&logo=looker&logoColor=white)
 ![GitHub Codespaces](https://img.shields.io/badge/Codespaces-Environment-181717?style=for-the-badge&logo=github&logoColor=white)
 
-## 📝 Featured Articles
+```mermaid
+graph TD
+    %% CI/CD PIPELINE
+    subgraph "1. CI/CD Pipeline (GitHub Actions)"
+        Code[Developer / Codespaces] -->|Git Push| GHA[GitHub Actions]
+        GHA -->|1. Test| TF[Terraform Validation]
+        GHA -->|2. Test| DBT_Test[dbt Data Contracts]
+        GHA -->|3. Build| Docker[Docker Build]
+    end
 
-[![Medium](https://img.shields.io/badge/Medium-Pipeline%20Breakdown-black?style=for-the-badge&logo=medium&logoColor=white)](https://medium.com/@ganiukuku/i-built-a-production-grade-data-pipeline-on-gcp-and-a-single-join-almost-blew-up-15-million-in-c0d4e3688e1e)
+    %% INFRA & ARTIFACTS
+    subgraph "2. Serverless Execution (GCP & Prefect)"
+        Docker -->|Delivers Image| GAR[(Google Artifact Registry)]
+        Prefect((Prefect Cloud)) -.->|On-Demand Trigger| CR[Google Cloud Run]
+        CR -->|Pulls Image to Run| GAR
+    end
 
-**"How a single LEFT JOIN silently inflated $15M in revenue — and how I fixed it."**
+    %% DATA PIPELINE
+    subgraph "3. The Data Flow (Medallion Architecture)"
+        CR -->|Extract & Load| GCS[(Cloud Storage<br>Data Lake)]
+        GCS -->|Raw Data| BQ_Raw[(BigQuery<br>Bronze/Raw)]
+        CR -->|Executes| DBT_Run[dbt Core]
+        DBT_Run -->|Transforms| BQ_Raw
+        DBT_Run -->|Models| BQ_Gold[(BigQuery<br>Silver/Gold)]
+        BQ_Gold -->|Feeds| Looker[Looker Studio Dashboard]
+    end
+    
+    classDef gcp fill:#e3f2fd,stroke:#1976d2,stroke-width:2px;
+    classDef git fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px;
+    classDef data fill:#e8f5e9,stroke:#388e3c,stroke-width:2px;
+    
+    class GAR,CR,GCS,BQ_Raw,BQ_Gold gcp;
+    class Code,GHA,TF,DBT_Test,Docker git;
+    class DBT_Run,Looker,Prefect data;
+```
 
-[![Medium](https://img.shields.io/badge/Medium-Cost%20Audit-black?style=for-the-badge&logo=medium&logoColor=white)](https://medium.com/@ganiukuku/i-built-a-data-pipeline-on-gcp-and-did-a-cost-audit-heres-what-i-found-65362ed883cf)
+## 🚀 The V2 Upgrade: From Local Script to Serverless Cloud
+Version 1 successfully moved data, but Version 2 was engineered for production. Following a rigorous code review, the entire codebase was refactored to meet enterprise software engineering and DevOps standards to handle a 4x scale-up in data volume (processing 2019 data).
 
-**"I audited my GCP data pipeline costs to uncover hidden inefficiencies and understand where the money was going."**
+### 🏗️ Infrastructure as Code (Terraform) Hardening
+* **Security First:** Implemented strict IAM policies and enforced public access prevention on all storage buckets.
+* **State Management:** Migrated from local state to remote backend state management for team-ready deployment.
+* **Reusability & Safety:** Replaced hardcoded variables with dynamic `tfvars` and removed dangerous `force_destroy = true` flags to prevent accidental production data loss.
+* **Cost Tracking:** Implemented comprehensive resource tagging across all GCP assets.
 
-## 💼 What This Project Demonstrates
-- End-to-end pipeline design on GCP
-- Infrastructure as Code with Terraform
-- Workflow orchestration with Prefect
-- Data modeling with dbt (Medallion Architecture)
-- Debugging real-world data integrity issues
-- Cost and performance optimization in BigQuery
+### ⚙️ Serverless DevOps & Automated CI/CD
+* **Continuous Delivery Pipeline (New):** Implemented a fully automated CI/CD pipeline using **GitHub Actions**. Every pull request and push to the `main` branch undergoes a strict two-stage validation:
+  1. **Infrastructure Check:** Terraform plans are verified against GCP to ensure resource integrity.
+  2. **Data Contract Testing:** A `dbt build` is executed to ensure new code doesn't break existing financial models or data quality tests.
+* **Containerization:** Only upon passing all tests is the Python execution code and dbt core packaged into a Docker container and delivered securely to Google Artifact Registry.
+* **Zero-Ops Compute:** Deployed to Google Cloud Run, moving from a static machine to a highly scalable, serverless environment that bills only per millisecond of execution.
+* **Cloud Orchestration:** Shifted from a local SQLite Prefect database to Prefect Cloud for remote observability, scheduling, and UI-based pipeline tracking.
 
-## 📊 About the Dataset
-
-This project utilizes the **[Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)**, sourced from Kaggle. 
-
-The data consists of nearly 100,000 anonymized orders placed between 2016 and 2018 across multiple marketplaces in Brazil. It includes multiple relational tables covering customers, orders, items, products, payments, and geographic locations. The high dimensionality and real-world messiness of this data (such as differing levels of granularity) made it the perfect candidate for building a robust Medallion architecture and practicing complex data modeling.
-
----
-
-## 📌 Project Overview
-
-The Olist dataset represents a real-world Brazilian e-commerce platform with nearly 100k orders across multiple interconnected tables.
-
-This project builds a **production-style end-to-end data pipeline** that ingests raw CSV data, stores it in a cloud data lake, loads it into a data warehouse, and transforms it into an analytics-ready **Star Schema**. 
-
-The pipeline is fully provisioned via **Infrastructure as Code (IaC)** and orchestrated using a **Directed Acyclic Graph (DAG)** to ensure reliability, fault tolerance, and scalability.
+### 🧹 Code Quality & Data Governance
+* **Python Resiliency:** Replaced basic print statements with a production logger, added comprehensive function docstrings, and implemented strict `try/except` error handling.
+* **dbt Best Practices:** Eliminated lazy `SELECT *` queries. Introduced config blocks inside models for precise materialization control, expanded the `sources.yml` definitions, and wrote custom data tests to catch edge-case anomalies.
 
 ### 🎯 Objectives
 Enable stakeholders to answer key business questions regarding:
@@ -67,32 +96,30 @@ The pipeline is fully automated using **Prefect** as the workflow orchestrator.
 
 ---
 
-## 📊 Dashboard & Business Insights
+## 📊 Dashboard & Business Insights (Scaled Dataset)
 
 ![Dashboard](assets/dashboard.jpg)
 
 🔗 **Live Dashboard:** [View on Looker Studio](https://lookerstudio.google.com/reporting/a8f06a74-485c-45e9-9554-3c5b36d7746e)
 
-### 1. The "One-and-Done" Retention Crisis 🚨
-* **Insight:** Out of 93,358 customers, 93,333 made only one purchase.
-* **Impact:** Customer Lifetime Value (LTV) is extremely low and revenue depends heavily on new customer acquisition.
-* **Recommendation:** Introduce loyalty programs, second-purchase incentives, and email retargeting campaigns.
+**1. Explosive Growth, But the Retention Crisis Remains 🚨**
+* **Insight:** Out of 386,051 total orders, an overwhelming 367,558 belong to customers who made only a single purchase.
+* **Impact:** The business can acquire customers at an incredible scale, but Lifetime Value (LTV) is bleeding out.
+* **Recommendation:** Implement automated 30-day post-purchase retargeting campaigns to convert the massive pool of one-time buyers.
 
-### 2. Logistics is a Major Strength 🚚
-* **Insight:** 91.9% of orders are delivered on time or early.
-* **Impact:** Strong delivery performance builds customer trust and competitive advantage.
-* **Recommendation:** Leverage fast delivery in marketing and customer acquisition campaigns.
+**2. Logistics is a True Superpower 🚚**
+* **Insight:** As volume scaled 4x, on-time and early deliveries actually improved from 91.9% to a staggering 98%.
+* **Impact:** The operational foundation is incredibly resilient.
+* **Recommendation:** Make this 98% on-time delivery rate a core pillar of customer acquisition marketing.
 
-### 3. Home & Personal Care Dominate Sales 🛋️
-* **Insight:** Top categories: `bed_bath_table`, `health_beauty`, `computers_accessories`.
-* **Impact:** Revenue is concentrated in lifestyle-driven categories.
-* **Recommendation:** Prioritize these categories in ads, inventory planning, and promotions.
+**3. A Shift in Lifestyle Categories 🛋️**
+* **Insight:** `sports_leisure` surged past tech products to become the #3 highest-grossing category, sitting right behind `bed_bath_table` and `health_beauty`.
+* **Impact:** The customer base is leaning heavily into personal wellness and home goods.
+* **Recommendation:** Shift ad spend and inventory forecasting to capitalize on the momentum of the sports and leisure category.
 
-### 4. Low-Ticket, Single-Item Buying Behavior 🛒
-* **Insight:** AOV = $159.85, avg items/order = 1.14.
-* **Impact:** Low basket size limits revenue per transaction.
-* **Recommendation:** Introduce bundling, upselling, and free shipping thresholds.
-
+**4. Basket Size is Shrinking 🛒**
+* **Insight:** Despite the revenue surge, Average Order Value (AOV) dipped to $155.63, and the average items per order dropped to an almost flat 1.04.
+* **Impact:** Customers are buying strictly what they came for with virtually no cross-selling happening at checkout.
 ---
 
 ## 🛠️ Tech Stack
