@@ -1,7 +1,9 @@
-name: CI Pipeline - Terraform & dbt
+name: CI/CD Pipeline - Test, Build & Deploy
 
-# Only runs on Pull Requests to main (Dev -> PR workflow)
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
@@ -9,51 +11,64 @@ on:
 jobs:
   
   # JOB 1: TERRAFORM INFRASTRUCTURE CHECK
-  
   terraform-plan:
     name: 'Terraform Plan Check'
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ./terraform 
-    
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
           credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
-      
       - name: Setup HashiCorp Terraform
         uses: hashicorp/setup-terraform@v3
-        
       - name: Terraform Init
         run: terraform init
-        
       - name: Terraform Plan
-        # Enforces the plan and fails the action if it crashes.
         run: terraform plan -input=false
         env:
-          # Dynamic Variables instead of Hardcoded Strings!
           TF_VAR_project_id: ${{ vars.GCP_PROJECT_ID }}
           TF_VAR_region: ${{ vars.GCP_REGION }}
           TF_VAR_bucket_name: ${{ vars.GCP_BUCKET_NAME }}
           TF_VAR_dataset_id: ${{ vars.GCP_DATASET_ID }}
           TF_VAR_is_development: true
 
-  
   # JOB 2: DBT DATA QUALITY CHECK
-  
   dbt-test:
     name: 'dbt Build & Test'
-    needs: terraform-plan # Forces dbt to wait for Terraform!
+    needs: terraform-plan
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ./olist_ecommerce 
-        
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      - name: Install dbt-bigquery
+        run: pip install dbt-bigquery
+      - name: Run dbt Build
+        run: dbt build --profiles-dir . --target dev
+
+  # JOB 3: DOCKER BUILD & CLOUD DEPLOY (The "Connector")
+  # This job ONLY runs if the push is to the main branch AND tests pass.
+  deploy:
+    name: 'Containerize & Deploy to Cloud Run'
+    needs: dbt-test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -62,16 +77,21 @@ jobs:
         uses: google-github-actions/auth@v2
         with:
           credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
-        
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-          cache: 'pip' # Caches Python packages to speed up the pipeline
-          
-      - name: Install dbt-bigquery
-        run: pip install dbt-bigquery
-        
-      - name: Run dbt Build
-        # Builds the tables and runs your financial tests!
-        run: dbt build --profiles-dir . --target dev
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for GCP
+        run: gcloud auth configure-docker --quiet
+
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t gcr.io/${{ vars.GCP_PROJECT_ID }}/olist-pipeline:latest .
+          docker push gcr.io/${{ vars.GCP_PROJECT_ID }}/olist-pipeline:latest
+
+      - name: Update Prefect Deployment
+        run: |
+          pip install prefect
+          prefect cloud login --key ${{ secrets.PREFECT_API_KEY }}
+          # This triggers the deployment to start using the new image immediately
+          prefect deployment run 'olist-pipeline/production-deployment'

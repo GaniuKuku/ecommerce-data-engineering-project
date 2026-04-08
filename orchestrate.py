@@ -3,7 +3,7 @@ from google.cloud import storage, bigquery
 import os
 import subprocess
 
-# -------- CONFIG --------
+# CONFIG 
 PROJECT_ID = "theta-sunlight-491314-n8"
 DATASET = "ecommerce_dw"
 BUCKET_NAME = "ecommerce-datalake-gk"
@@ -22,7 +22,7 @@ FILE_PREFIX_MAPPING = {
     "product_category_name_translation": "category_translation/"
 }
 
-# --- TASK 1: Upload to Data Lake ---
+# TASK 1: Upload to Data Lake 
 @task(name="Upload to GCS", retries=2, retry_delay_seconds=10)
 def upload_files():
     """This function uploads files to GCS"""
@@ -47,14 +47,14 @@ def upload_files():
     return "Upload complete"
 
 
-# --- TASK 2: Load to Data Warehouse (WILDCARD EDITION) ---
+# TASK 2: Load to Data Warehouse (WILDCARD EDITION) 
 @task(name="Load into BigQuery", retries=2, retry_delay_seconds=10)
 def load_all_tables(upstream_trigger):
     logger = get_run_logger()
     client = bigquery.Client(project=PROJECT_ID)
     loaded_tables = []
 
-    # We iterate through the unique folders and use the *.csv wildcard!
+    # I iterate through the unique folders and use the *.csv wildcard!
     for table_name, folder in zip(
         ["customers", "geolocation", "order_items", "payments", "reviews", "orders", "products", "sellers", "category_translation"],
         ["customer/", "geolocation/", "order_items/", "payments/", "reviews/", "orders/", "products/", "sellers/", "category_translation/"]
@@ -81,7 +81,7 @@ def load_all_tables(upstream_trigger):
     return loaded_tables
 
 
-# --- TASK 3: Transform, Snapshot, and Test ---
+# TASK 3: Transform, Snapshot, and Test.
 @task(name="Execute dbt DAG", retries=1, retry_delay_seconds=20)
 def run_dbt_dag(loaded_tables):
     logger = get_run_logger()
@@ -115,7 +115,7 @@ def run_dbt_dag(loaded_tables):
     return "dbt DAG completed successfully"
 
 
-# --- THE DAG ---
+# THE DAG 
 @flow(name="Olist End-to-End Pipeline")
 def main_pipeline():
     logger = get_run_logger()

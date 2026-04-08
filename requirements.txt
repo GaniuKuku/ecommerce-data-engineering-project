@@ -1,0 +1,5 @@
+prefect>=2.0.0
+pandas
+google-cloud-storage
+google-cloud-bigquery
+dbt-bigquery
