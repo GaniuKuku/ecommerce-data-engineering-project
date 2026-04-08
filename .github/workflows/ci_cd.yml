@@ -89,11 +89,3 @@ jobs:
           docker build -t gcr.io/${{ vars.GCP_PROJECT_ID }}/olist-pipeline:latest .
           docker push gcr.io/${{ vars.GCP_PROJECT_ID }}/olist-pipeline:latest
 
-      - name: Update Prefect Deployment
-        env:
-          PREFECT_API_URL: 'https://api.prefect.cloud/api/accounts/b1f976a8-b558-45db-a508-cf1036056dd2/workspaces/39046ac6-3080-43e5-bc9e-607461667107'
-          PREFECT_API_KEY: ${{ secrets.PREFECT_API_KEY }}
-        run: |
-          pip install prefect
-          # This triggers the deployment using the direct API URL authentication
-          prefect deployment run 'olist-pipeline/production-deployment'
