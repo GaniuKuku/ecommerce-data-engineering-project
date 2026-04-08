@@ -88,4 +88,3 @@ jobs:
         run: |
           docker build -t gcr.io/${{ vars.GCP_PROJECT_ID }}/olist-pipeline:latest .
           docker push gcr.io/${{ vars.GCP_PROJECT_ID }}/olist-pipeline:latest
-
