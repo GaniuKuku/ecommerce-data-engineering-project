@@ -17,7 +17,7 @@
 ![Looker](https://img.shields.io/badge/Looker%20Studio-Dashboard-4285F4?style=for-the-badge&logo=looker&logoColor=white)
 ![GitHub Codespaces](https://img.shields.io/badge/Codespaces-Environment-181717?style=for-the-badge&logo=github&logoColor=white)
 
-![Architecture](assets/arch_flow_two.png)
+![Architecture](assets/archi_flow_two.png)
 
 ## 🚀 The V2 Upgrade: From Local Script to Serverless Cloud
 Version 1 successfully moved data, but Version 2 was engineered for production. Following a rigorous code review, the entire codebase was refactored to meet enterprise software engineering and DevOps standards to handle a 4x scale-up in data volume (processing 2019 data).
