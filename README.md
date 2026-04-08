@@ -17,41 +17,7 @@
 ![Looker](https://img.shields.io/badge/Looker%20Studio-Dashboard-4285F4?style=for-the-badge&logo=looker&logoColor=white)
 ![GitHub Codespaces](https://img.shields.io/badge/Codespaces-Environment-181717?style=for-the-badge&logo=github&logoColor=white)
 
-```mermaid
-graph TD
-    %% CI/CD PIPELINE
-    subgraph "1. CI/CD Pipeline (GitHub Actions)"
-        Code[Developer / Codespaces] -->|Git Push| GHA[GitHub Actions]
-        GHA -->|1. Test| TF[Terraform Validation]
-        GHA -->|2. Test| DBT_Test[dbt Data Contracts]
-        GHA -->|3. Build| Docker[Docker Build]
-    end
-
-    %% INFRA & ARTIFACTS
-    subgraph "2. Serverless Execution (GCP & Prefect)"
-        Docker -->|Delivers Image| GAR[(Google Artifact Registry)]
-        Prefect((Prefect Cloud)) -.->|On-Demand Trigger| CR[Google Cloud Run]
-        CR -->|Pulls Image to Run| GAR
-    end
-
-    %% DATA PIPELINE
-    subgraph "3. The Data Flow (Medallion Architecture)"
-        CR -->|Extract & Load| GCS[(Cloud Storage<br>Data Lake)]
-        GCS -->|Raw Data| BQ_Raw[(BigQuery<br>Bronze/Raw)]
-        CR -->|Executes| DBT_Run[dbt Core]
-        DBT_Run -->|Transforms| BQ_Raw
-        DBT_Run -->|Models| BQ_Gold[(BigQuery<br>Silver/Gold)]
-        BQ_Gold -->|Feeds| Looker[Looker Studio Dashboard]
-    end
-    
-    classDef gcp fill:#e3f2fd,stroke:#1976d2,stroke-width:2px;
-    classDef git fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px;
-    classDef data fill:#e8f5e9,stroke:#388e3c,stroke-width:2px;
-    
-    class GAR,CR,GCS,BQ_Raw,BQ_Gold gcp;
-    class Code,GHA,TF,DBT_Test,Docker git;
-    class DBT_Run,Looker,Prefect data;
-```
+![Architecture](assets/arch_flow_two.png)
 
 ## 🚀 The V2 Upgrade: From Local Script to Serverless Cloud
 Version 1 successfully moved data, but Version 2 was engineered for production. Following a rigorous code review, the entire codebase was refactored to meet enterprise software engineering and DevOps standards to handle a 4x scale-up in data volume (processing 2019 data).
@@ -73,26 +39,6 @@ Version 1 successfully moved data, but Version 2 was engineered for production. 
 ### 🧹 Code Quality & Data Governance
 * **Python Resiliency:** Replaced basic print statements with a production logger, added comprehensive function docstrings, and implemented strict `try/except` error handling.
 * **dbt Best Practices:** Eliminated lazy `SELECT *` queries. Introduced config blocks inside models for precise materialization control, expanded the `sources.yml` definitions, and wrote custom data tests to catch edge-case anomalies.
-
-### 🎯 Objectives
-Enable stakeholders to answer key business questions regarding:
-- Revenue growth 📈  
-- Customer lifetime value (LTV) 👤  
-- Delivery performance 🚚  
-
----
-
-## 🏗️ Architecture & Orchestration
-
-![Architecture](assets/arch_flow.png)
-
-### ⚙️ Workflow Orchestration (Prefect DAG)
-The pipeline is fully automated using **Prefect** as the workflow orchestrator. 
-* **Data Dependencies:** BigQuery ingestion strictly waits for successful GCS uploads, and dbt transformations only trigger upon successful data warehouse loading.
-* **Fault Tolerance:** Tasks are configured with automated retries (`retries=2`) to gracefully handle transient cloud network API timeouts.
-* **Observability:** Utilizes Prefect's native logger for capturing detailed execution states and dbt compilation logs.
-
-![Prefect Orchestration DAG](assets/DAG.png)
 
 ---
 
@@ -135,52 +81,6 @@ The pipeline is fully automated using **Prefect** as the workflow orchestrator.
 - **Environment:** GitHub Codespaces
 
 ---
-
-## 🔀 Transformation Pipeline (Medallion Architecture)
-
-All transformations are managed using **dbt**, ensuring modular, testable, and production-ready data pipelines.
-
-![dbt-lineage](assets/dbt-dag.png)
-
-### 🥉 Bronze Layer (Staging)
-**Focus: Data Sanitization & Refactoring**
-Raw tables are converted into dependable, cleanly cast foundations.
-- **Renaming:** Technical names (`zip_code_prefix`) to business terms (`zip_code`).
-- **Casting:** Strings cast to proper `TIMESTAMP`, `DATE`, and numeric formats.
-- **Localization:** Joined products with `category_translation` to replace Portuguese categories with English.
-
-### 🥈 Silver Layer (Intermediate & Fact)
-**Focus: Granularity Alignment & Integrity**
-Solves the critical **Revenue Explosion** issue. Since a single order can have multiple items and payments, joining them directly duplicates revenue.
-- **Solution:** Built `int_order_items_agg` and `int_order_payments_agg` to `GROUP BY order_id` before joining to the central fact table, guaranteeing 100% financial accuracy.
-
-### 🥇 Gold Layer (Business Marts)
-**Focus: Presentation & Business Value**
-Specialized, highly-aggregated tables designed for Looker Studio performance:
-- `mart_sales_summary`: Monthly revenue trends and order counts.
-- `mart_kpis`: High-level scorecard headers (LTV, AOV, Total Revenue).
-- `mart_customer_segmentation`: Ranks customers by spend and lifecycle.
-- `mart_delivery_performance`: Measures the "Delivery Gap" (Expected vs. Actual Date).
-
----
-
-## ⚡ Performance & Cost Optimization
-
-### 1. Incremental Materialization
-To optimize compute costs on historical data (like the 1M+ row geolocation table), models were converted to `materialized='incremental'`. dbt uses `is_incremental()` to only merge new records arriving after the `MAX(order_purchase_timestamp)`. 
-* **Impact:** Reduced data processed per subsequent run by >90%.
-
-### 2. BigQuery Partitioning & Clustering
-The central `fct_orders` table was physically optimized in the data warehouse.
-* **Partitioning:** Grouped by `order_purchase_timestamp` at the month granularity to restrict data scans during time-series queries.
-* **Clustering:** Sorted by `customer_id` to speed up specific customer lookups and aggregate LTV calculations.
-
----
-
-## 🛡️ Data Quality & Testing
-Automated dbt tests enforce strict data contracts before visualization:
-- **Schema Tests:** `unique` and `not_null` constraints deployed on all primary keys.
-- **Referential Integrity:** Applied relationship (foreign key) tests to ensure 0% "orphan" records between fact and dimension tables...
 
 ---
 
