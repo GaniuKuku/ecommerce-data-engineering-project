@@ -99,8 +99,6 @@ Version 1 successfully moved data, but Version 2 was engineered for production. 
 - **Terraform** installed
 - **Python 3.11+** ```
 
-This list perfectly sets expectations for anyone trying to reproduce your impressive V2 pipeline. Just drop this in to replace your current list, and I think your README is officially bulletproof!
-
 ---
 
 ## 🚀 How to Run this Project
@@ -108,8 +106,7 @@ This list perfectly sets expectations for anyone trying to reproduce your impres
 **Step 1. Clone the repository**
 
 ```bash
-git clone [https://github.com/GaniuKuku/ecommerce-data-engineering-project.git](https://github.com/GaniuKuku/ecommerce-data-engineering-project.git)
-cd ecommerce-data-engineering-project
+git clone [https://github.com/GaniuKuku/ecommerce-data-engineering-project.git]
 ```
 
 **Step 2: Set up GitHub Secrets & Variables**
