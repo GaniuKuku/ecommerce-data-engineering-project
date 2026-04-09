@@ -4,9 +4,22 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - 'README.md'
+      - 'assets/**'
+      - '**/*.png'
+      - '**/*.jpg'
+      - '.gitignore'
   pull_request:
     branches:
       - main
+    paths-ignore:
+      - 'README.md'
+      - 'assets/**'
+      - '**/*.png'
+      - '**/*.jpg'
+      - '.gitignore'
+    
 
 jobs:
   
