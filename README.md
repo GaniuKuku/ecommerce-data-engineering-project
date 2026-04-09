@@ -1,7 +1,8 @@
 # 🛒 Olist E-Commerce Data Engineering Project (v2.0 - Production Architecture)
 
-**📌 Version Notice:** This is the `main` branch representing Version 2, focusing on serverless cloud deployment, automated CI/CD pipelines, hardened code standards, and infrastructure security.  
-*To view the original local Proof-of-Concept, check out the `[Version 1 Archive](https://github.com/GaniuKuku/ecommerce-data-engineering-project/tree/archive-v1)` branch.*
+**📌 Version Notice:** This is the `main` branch representing Version 2, focusing on serverless cloud deployment, automated CI/CD pipelines, hardened code standards, and infrastructure security. 
+
+*To view the original local Proof-of-Concept, check out the [**VERSION 1**](https://github.com/GaniuKuku/ecommerce-data-engineering-project/tree/archive-v1) branch.*
 
 **Serverless Modern Data Stack using GCP, Cloud Run, Terraform, Prefect Cloud, BigQuery, dbt, GitHub Actions & Looker Studio**
 
@@ -20,7 +21,7 @@
 ![Architecture](assets/archi_flow_two.png)
 
 ## 🚀 The V2 Upgrade: From Local Script to Serverless Cloud
-Version 1 successfully moved data, but Version 2 was engineered for production. Following a rigorous code review, the entire codebase was refactored to meet enterprise software engineering and DevOps standards to handle a 4x scale-up in data volume (processing 2019 data).
+Version 1 successfully moved data, but Version 2 was engineered for production. Following a rigorous code review, the entire codebase was refactored to meet enterprise software engineering and DevOps standards to handle a 3x scale-up in data volume (processing 2019 data).
 
 ### 🏗️ Infrastructure as Code (Terraform) Hardening
 * **Security First:** Implemented strict IAM policies and enforced public access prevention on all storage buckets.
@@ -31,20 +32,22 @@ Version 1 successfully moved data, but Version 2 was engineered for production. 
 ### ⚙️ Serverless DevOps & Automated CI/CD
 * **Continuous Delivery Pipeline (New):** Implemented a fully automated CI/CD pipeline using **GitHub Actions**. Every pull request and push to the `main` branch undergoes a strict two-stage validation:
   1. **Infrastructure Check:** Terraform plans are verified against GCP to ensure resource integrity.
-  2. **Data Contract Testing:** A `dbt build` is executed to ensure new code doesn't break existing financial models or data quality tests.
+  2. **Data Contract Testing:** A `dbt build` is executed to ensure new code doesn't break existing financial models or critical data quality tests.
 * **Containerization:** Only upon passing all tests is the Python execution code and dbt core packaged into a Docker container and delivered securely to Google Artifact Registry.
 * **Zero-Ops Compute:** Deployed to Google Cloud Run, moving from a static machine to a highly scalable, serverless environment that bills only per millisecond of execution.
 * **Cloud Orchestration:** Shifted from a local SQLite Prefect database to Prefect Cloud for remote observability, scheduling, and UI-based pipeline tracking.
 
 ### 🧹 Code Quality & Data Governance
 * **Python Resiliency:** Replaced basic print statements with a production logger, added comprehensive function docstrings, and implemented strict `try/except` error handling.
-* **dbt Best Practices:** Eliminated lazy `SELECT *` queries. Introduced config blocks inside models for precise materialization control, expanded the `sources.yml` definitions, and wrote custom data tests to catch edge-case anomalies.
+* **Historical State Tracking (dbt Snapshots):** Implemented Slowly Changing Dimensions (SCD Type 2) via dbt snapshots to track the historical state of the `order_status` column over time, allowing the business to analyze order lifecycle bottlenecks.
+* **Custom Data Contracts (Singular Tests):** Engineered advanced SQL tests to audit business logic (e.g., ensuring delivery dates always occur after purchase dates). Strategically configured financial discrepancy checks with `severity = 'warn'`. This ensures minor data anomalies (like sub-$2 float rounding differences) are flagged for the analytics team without hard-failing the automated CI/CD deployment.
+* **dbt Best Practices:** Eliminated lazy `SELECT *` queries. Introduced config blocks inside models for precise materialization control, and expanded the `sources.yml` definitions for robust lineage tracking.
 
 ---
 
 ## 📊 Dashboard & Business Insights (Scaled Dataset)
 
-![Dashboard](assets/dashboard.jpg)
+![Dashboard](assets/dashboard_two.png)
 
 🔗 **Live Dashboard:** [View on Looker Studio](https://lookerstudio.google.com/reporting/a8f06a74-485c-45e9-9554-3c5b36d7746e)
 
