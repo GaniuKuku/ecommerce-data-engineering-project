@@ -19,36 +19,9 @@
 ![GitHub Codespaces](https://img.shields.io/badge/Codespaces-Environment-181717?style=for-the-badge&logo=github&logoColor=white)
 
 ![Architecture](assets/archi_flow_two.png)
-
-```
-merge into `theta-sunlight-491314-n8`.`ecommerce_dw`.`fct_orders` as DBT_INTERNAL_DEST
-using (
-    WITH orders AS (
-        SELECT 
-            order_id, customer_id, order_status, order_purchase_timestamp, -- [truncated]
-        FROM `theta-sunlight-491314-n8`.`ecommerce_dw`.`stg_orders`
-        
-        -- THE INCREMENTAL MAGIC: Only grab orders AFTER the latest order currently in this table
-        WHERE order_purchase_timestamp > (
-            SELECT MAX(order_purchase_timestamp) FROM `theta-sunlight-491314-n8`.`ecommerce_dw`.`fct_orders`
-        )
-    )
-    -- [joins with items and payments]
-) as DBT_INTERNAL_SOURCE
-on (DBT_INTERNAL_SOURCE.order_id = DBT_INTERNAL_DEST.order_id)
-
-when matched then update set
-    `order_id` = DBT_INTERNAL_SOURCE.`order_id`,
-    `order_status` = DBT_INTERNAL_SOURCE.`order_status`, -- [updates all changed columns]
-
-when not matched then insert
-    (`order_id`, `customer_id`, `order_status`, `order_purchase_timestamp`...)
-values
-    (`order_id`, `customer_id`, `order_status`, `order_purchase_timestamp`...)
-```
-
+----
 ### 🎯 Business Impact Driven by Engineering
-By upgrading to a highly scalable, serverless architecture, the pipeline was able to process the complete 2019 dataset (a 3x volume increase). This scale unlocked a critical business reality that smaller samples missed: despite driving **$60.08M** in total revenue and maintaining a **98% delivery success rate**, the business is facing a severe retention crisis, with over **95% of customers making only a single purchase.**
+By upgrading to a highly scalable, serverless architecture, the pipeline was able to scale from ~100k to 386k+ records (3x increase). This scaling unlocked a critical business reality that smaller samples missed: despite driving **$60.08M** in total revenue and maintaining a **98% delivery success rate**, the business is facing a severe retention crisis, with over **95% of customers making only a single purchase.**
 
 ## 🚀 The V2 Upgrade: From Local Script to Serverless Cloud
 Version 1 successfully moved data, but Version 2 was engineered for production. Following a rigorous code review, the entire codebase was refactored to meet enterprise software engineering and DevOps standards to handle a 3x scale-up in data volume (processing 2019 data).
@@ -59,13 +32,12 @@ Version 1 successfully moved data, but Version 2 was engineered for production. 
 * **Reusability & Safety:** Replaced hardcoded variables with dynamic `tfvars` and removed dangerous `force_destroy = true` flags to prevent accidental production data loss.
 * **Cost Tracking:** Implemented comprehensive resource tagging across all GCP assets.
 
-### ⚙️ Serverless DevOps & Automated CI/CD
-* **Continuous Delivery Pipeline (New):** Implemented a fully automated CI/CD pipeline using **GitHub Actions**. Every pull request and push to the `main` branch undergoes a strict two-stage validation:
-  1. **Infrastructure Check:** Terraform plans are verified against GCP to ensure resource integrity.
-  2. **Data Contract Testing:** A `dbt build` is executed to ensure new code doesn't break existing financial models or critical data quality tests.
-* **Containerization:** Only upon passing all tests is the Python execution code and dbt core packaged into a Docker container and delivered securely to Google Artifact Registry.
-* **Zero-Ops Compute:** Deployed to Google Cloud Run, moving from a static machine to a highly scalable, serverless environment that bills only per millisecond of execution.
-* **Cloud Orchestration:** Shifted from a local SQLite Prefect database to Prefect Cloud for remote observability, scheduling, and UI-based pipeline tracking.
+### ⚙️ DevOps & Automated CI/CD (Continuous Integration & Delivery)
+* **Event-Driven CI Pipeline:** Engineered a fully automated GitHub Actions pipeline with optimized execution triggers to prevent redundant compute waste. Every code push to `main` undergoes a strict two-stage validation:
+  1. **Infrastructure as Code (IaC) Check:** Terraform plans are validated against GCP to ensure resource integrity before any infrastructure is mutated.
+  2. **Data Contract Testing:** A full `dbt build` is executed in an ephemeral environment to guarantee new code doesn't break existing financial models or governance assertions.
+* **Automated Containerization & Registry:** Only upon passing all tests is the pipeline code and dbt core packaged into a Docker image and pushed securely to Google Artifact Registry, where it is staged and ready for production deployment.
+* **Cloud Orchestration:** * Shifted pipeline execution management to Prefect Cloud, enabling remote observability, automated failure alerting, and a centralized UI for run-state tracking without needing to host or manage local orchestration infrastructure.
 
 ### 🧹 Code Quality & Data Governance
 * **Python Resiliency:** Replaced basic print statements with a production logger, added comprehensive function docstrings, and implemented strict `try/except` error handling.
