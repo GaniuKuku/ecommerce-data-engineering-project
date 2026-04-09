@@ -47,7 +47,7 @@ Version 1 successfully moved data, but Version 2 was engineered for production. 
 
 ## 📊 Dashboard & Business Insights (Scaled Dataset)
 
-![Dashboard](assets/dashboard_two.png)
+![Dashboard](assets/v_two.png)
 
 🔗 **Live Dashboard:** [View on Looker Studio](https://lookerstudio.google.com/reporting/a8f06a74-485c-45e9-9554-3c5b36d7746e)
 
