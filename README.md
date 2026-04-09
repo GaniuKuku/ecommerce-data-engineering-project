@@ -115,7 +115,6 @@ To ensure enterprise-grade resilience, the pipeline incorporates the following d
 - **GitHub Account** (to fork the repo and run GitHub Actions/Codespaces)
 - **Prefect Cloud** workspace (Free tier works perfectly)
 - **Kaggle Account + API Key** (to download the raw Olist dataset)
-- **Docker Desktop** installed (for any local container testing)
 - **Terraform** installed
 - **Python 3.11+** ```
 
