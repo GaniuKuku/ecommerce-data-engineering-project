@@ -20,6 +20,9 @@
 
 ![Architecture](assets/archi_flow_two.png)
 
+### 🎯 Business Impact Driven by Engineering
+By upgrading to a highly scalable, serverless architecture, the pipeline was able to process the complete 2019 dataset (a 3x volume increase). This scale unlocked a critical business reality that smaller samples missed: despite driving **$60.08M** in total revenue and maintaining a **98% delivery success rate**, the business is facing a severe retention crisis, with over **95% of customers making only a single purchase.**
+
 ## 🚀 The V2 Upgrade: From Local Script to Serverless Cloud
 Version 1 successfully moved data, but Version 2 was engineered for production. Following a rigorous code review, the entire codebase was refactored to meet enterprise software engineering and DevOps standards to handle a 3x scale-up in data volume (processing 2019 data).
 
@@ -42,6 +45,23 @@ Version 1 successfully moved data, but Version 2 was engineered for production. 
 * **Historical State Tracking (dbt Snapshots):** Implemented Slowly Changing Dimensions (SCD Type 2) via dbt snapshots to track the historical state of the `order_status` column over time, allowing the business to analyze order lifecycle bottlenecks.
 * **Custom Data Contracts (Singular Tests):** Engineered advanced SQL tests to audit business logic (e.g., ensuring delivery dates always occur after purchase dates). Strategically configured financial discrepancy checks with `severity = 'warn'`. This ensures minor data anomalies (like sub-$2 float rounding differences) are flagged for the analytics team without hard-failing the automated CI/CD deployment.
 * **dbt Best Practices:** Eliminated lazy `SELECT *` queries. Introduced config blocks inside models for precise materialization control, and expanded the `sources.yml` definitions for robust lineage tracking.
+
+## 🧩 System Design Decisions & Trade-offs
+When upgrading to Version 2, several architectural choices were made to optimize for scalability, cost, and maintainability:
+
+* **Cloud Run vs. Airflow/Compute Engine:** Traditional orchestration engines like Airflow require "always-on" infrastructure, incurring passive costs. By decoupling orchestration (Prefect) from execution (Cloud Run), the pipeline achieves a true scale-to-zero serverless footprint, billing only for exact milliseconds of execution time.
+* **Prefect vs. Cron Jobs:** While a simple cron job could trigger the script, Prefect Cloud was chosen to provide critical observability. It offers built-in state tracking, automated retries for transient network failures, and UI-based logging without managing backend databases.
+* **dbt vs. Pure SQL Views:** dbt was implemented to bring software engineering principles to the data warehouse. It provides automatic lineage graphs, DRY (Don't Repeat Yourself) modularity via macros, and automated data quality testing that pure SQL lacks.
+* **CI/CD enforcing Data Contracts:** The GitHub Actions pipeline isn't just for deployment; it is a defensive gatekeeper. If a financial discrepancy test fails during the build step, the deployment is automatically blocked, preventing bad code from reaching the production BigQuery environment.
+
+## 🛡️ Reliability & Engineering Depth
+To ensure enterprise-grade resilience, the pipeline incorporates the following data engineering patterns:
+
+* **Idempotency:** The pipeline is fully idempotent. Executing the Prefect workflow multiple times for the same time window will not duplicate records. The dbt Silver/Gold layers utilize incremental models and merge strategies to safely upsert data.
+* **Partitioning & Cost Optimization:** To optimize Looker Studio query costs, the primary BigQuery fact tables (`fct_orders`) are partitioned by `order_purchase_timestamp`. This drastically reduces the data scanned during dashboard date-range filtering.
+* **Failure Handling Strategy:**
+  * **Transient API Failures:** Prefect tasks interacting with external APIs are configured with retries to survive temporary network hiccups.
+  * **Data Quality Breaches:** Custom singular tests use dynamic severities (`warn` for analytics visibility vs. `error` for hard fails).
 
 ---
 
