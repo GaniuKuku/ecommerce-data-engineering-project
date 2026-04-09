@@ -20,6 +20,33 @@
 
 ![Architecture](assets/archi_flow_two.png)
 
+```
+merge into `theta-sunlight-491314-n8`.`ecommerce_dw`.`fct_orders` as DBT_INTERNAL_DEST
+using (
+    WITH orders AS (
+        SELECT 
+            order_id, customer_id, order_status, order_purchase_timestamp, -- [truncated]
+        FROM `theta-sunlight-491314-n8`.`ecommerce_dw`.`stg_orders`
+        
+        -- THE INCREMENTAL MAGIC: Only grab orders AFTER the latest order currently in this table
+        WHERE order_purchase_timestamp > (
+            SELECT MAX(order_purchase_timestamp) FROM `theta-sunlight-491314-n8`.`ecommerce_dw`.`fct_orders`
+        )
+    )
+    -- [joins with items and payments]
+) as DBT_INTERNAL_SOURCE
+on (DBT_INTERNAL_SOURCE.order_id = DBT_INTERNAL_DEST.order_id)
+
+when matched then update set
+    `order_id` = DBT_INTERNAL_SOURCE.`order_id`,
+    `order_status` = DBT_INTERNAL_SOURCE.`order_status`, -- [updates all changed columns]
+
+when not matched then insert
+    (`order_id`, `customer_id`, `order_status`, `order_purchase_timestamp`...)
+values
+    (`order_id`, `customer_id`, `order_status`, `order_purchase_timestamp`...)
+```
+
 ### 🎯 Business Impact Driven by Engineering
 By upgrading to a highly scalable, serverless architecture, the pipeline was able to process the complete 2019 dataset (a 3x volume increase). This scale unlocked a critical business reality that smaller samples missed: despite driving **$60.08M** in total revenue and maintaining a **98% delivery success rate**, the business is facing a severe retention crisis, with over **95% of customers making only a single purchase.**
 
@@ -65,6 +92,17 @@ To ensure enterprise-grade resilience, the pipeline incorporates the following d
 * **Failure Handling Strategy:**
   * **Transient API Failures:** Prefect tasks interacting with external APIs are configured with retries to survive temporary network hiccups.
   * **Data Quality Breaches:** Custom singular tests use dynamic severities (`warn` for analytics visibility vs. `error` for hard fails).
+ ----
+ 
+## 💰 FinOps & Cost Optimization (The $0.16 Architecture)
+
+Building a data pipeline that works is one thing; building a pipeline that scales profitably is another. By engineering a strictly serverless architecture and applying advanced data warehouse tuning, this pipeline processed the entire 2019 dataset (over 386,000 records) and executed complex dbt transformations for a total cloud bill of exactly **$0.16**.
+
+This extreme cost efficiency was achieved through three deliberate engineering decisions:
+
+* **Zero-Waste Compute (Scale-to-Zero):** By decoupling the orchestrator (Prefect Cloud) from the execution engine (Google Cloud Run), the infrastructure achieves a true scale-to-zero state. There are no "always-on" Airflow VMs burning hourly compute; the system bills strictly for the exact seconds the Docker container is actively processing data.
+* **Incremental dbt Materializations:** Instead of performing expensive "Full Refreshes" (dropping and rebuilding the massive `fct_orders` table on every run), the core models are materialized incrementally. The dbt pipeline uses a dynamic `MERGE` strategy to query the `MAX(order_purchase_timestamp)` and only upsert brand-new orders into the warehouse.
+* **BigQuery Partitioning:** To ensure the incremental `MERGE` doesn't trigger a full table scan, the primary fact tables are partitioned by date. This strategic partitioning reduced the BigQuery scan volume to just **0.106 GB** per run, bringing the transformation compute cost down to a fraction of a cent (**$0.0006 per execution**).
 
 ---
 
