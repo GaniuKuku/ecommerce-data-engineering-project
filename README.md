@@ -14,7 +14,7 @@
 ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-CI/CD-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)
 ![BigQuery](https://img.shields.io/badge/BigQuery-Data%20Warehouse-4285F4?style=for-the-badge&logo=googlebigquery&logoColor=white)
 ![dbt](https://img.shields.io/badge/dbt-Transformations-FF694B?style=for-the-badge&logo=dbt&logoColor=white)
-![Prefect](https://img.shields.io/badge/Prefect-Orchestration-070E10?style=for-the-badge&logo=prefect&logoColor=white)
+![Prefect Cloud](https://img.shields.io/badge/Prefect-Orchestration-070E10?style=for-the-badge&logo=prefect&logoColor=white)
 ![Looker](https://img.shields.io/badge/Looker%20Studio-Dashboard-4285F4?style=for-the-badge&logo=looker&logoColor=white)
 ![GitHub Codespaces](https://img.shields.io/badge/Codespaces-Environment-181717?style=for-the-badge&logo=github&logoColor=white)
 
@@ -69,72 +69,69 @@ Version 1 successfully moved data, but Version 2 was engineered for production. 
 **4. Basket Size is Shrinking 🛒**
 * **Insight:** Despite the revenue surge, Average Order Value (AOV) dipped to $155.63, and the average items per order dropped to an almost flat 1.04.
 * **Impact:** Customers are buying strictly what they came for with virtually no cross-selling happening at checkout.
+* **Recommendation:** Deploy "Frequently Bought Together" UI modules and introduce free shipping thresholds at $200.
 ---
 
 ## 🛠️ Tech Stack
 
 - **Cloud Platform:** Google Cloud Platform (GCP)
+- **Serverless Compute (New):** Google Cloud Run
+- **Container Registry (New):** Google Artifact Registry
+- **CI/CD Pipeline (New):** GitHub Actions
+- **Containerization (New):** Docker
 - **Infrastructure as Code (IaC):** Terraform
 - **Data Lake:** Google Cloud Storage (GCS)
 - **Data Warehouse:** BigQuery
 - **Transformation Layer:** dbt (data build tool)
-- **Workflow Orchestration:** Prefect
-- **Programming Language:** Python
+- **Workflow Orchestration (Upgraded):** Prefect Cloud
+- **Programming Language:** Python 3.11+
 - **BI Tool:** Looker Studio
-- **Environment:** GitHub Codespaces
-
----
-
----
-
-## 🙏 Acknowledgements
-This project was submitted as capstone project to 
-[DataTalks.Club Data Engineering Zoomcamp](https://github.com/DataTalksClub/data-engineering-zoomcamp) 
-— a free, project-based bootcamp for aspiring data engineers.
+- **Development Environment:** GitHub Codespaces
 
 ---
 
 ## 📋 Prerequisites
-- Google Cloud Platform account with billing enabled
-- Kaggle account + API key (to download the dataset)
-- Python 3.11+
-- Terraform installed
-- Prefect installed
+- **Google Cloud Platform** account (with billing enabled)
+- **GitHub Account** (to fork the repo and run GitHub Actions/Codespaces)
+- **Prefect Cloud** workspace (Free tier works perfectly)
+- **Kaggle Account + API Key** (to download the raw Olist dataset)
+- **Docker Desktop** installed (for any local container testing)
+- **Terraform** installed
+- **Python 3.11+** ```
+
+This list perfectly sets expectations for anyone trying to reproduce your impressive V2 pipeline. Just drop this in to replace your current list, and I think your README is officially bulletproof!
 
 ---
 
 ## 🚀 How to Run this Project
 
 **1. Clone the repository**
-
 ```bash
-git clone https://github.com/GaniuKuku/ecommerce-data-engineering-project.git
+git clone [https://github.com/GaniuKuku/ecommerce-data-engineering-project.git](https://github.com/GaniuKuku/ecommerce-data-engineering-project.git)
 cd ecommerce-data-engineering-project
 ```
 
-**2. Provision Cloud Infrastructure**
+**Step 2: Set up GitHub Secrets & Variables**
+To allow GitHub Actions to securely build your infrastructure and containerize your code, go to your forked repository's Settings > Secrets and variables > Actions and add the following:
+Repository Secrets:
+GCP_CREDENTIALS: Your Google Cloud Service Account JSON key.
+Repository Variables:
+GCP_PROJECT_ID: Your exact GCP Project ID.
+GCP_REGION: e.g., us-central1.
+GCP_BUCKET_NAME: Your chosen globally unique Cloud Storage bucket name.
+GCP_DATASET_ID: Your BigQuery dataset name.
 
-Ensure you have GCP credentials configured in your environment, then run:
+**Step 3: Trigger the CI/CD Pipeline**
+Make any change to the codebase (or simply trigger a manual commit) and push to the main branch.
 ```bash
-cd terraform
-terraform init
-terraform apply
+git commit --allow-empty -m "trigger: initial pipeline delivery"
+git push origin main
 ```
 
-**3. Run the Data Pipeline**
-
-Install dependencies and execute the Prefect orchestrator to move data from local CSVs → GCS → BigQuery → dbt:
-```bash
-pip install -r requirements.txt
-python orchestrate.py
-```
-
-**4. View the Pipeline DAG**
-
-Spin up the Prefect UI to view the task execution graph:
-```bash
-prefect server start
-```
+**Step 4: Verify the Delivery**
+Open the Actions tab in GitHub to watch the runner automatically test your Terraform plans, validate your dbt models, and build the Docker container.
+Once the pipeline turns green, log into Google Cloud Console.
+Navigate to Artifact Registry. You will see your production-ready Docker image (olist-pipeline:latest) safely stored and ready to be deployed to Cloud Run or triggered via an orchestrator (like Prefect) whenever a data run is required.
 
 
 
