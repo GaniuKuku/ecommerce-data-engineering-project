@@ -46,6 +46,9 @@ Version 1 successfully moved data, but Version 2 was engineered for production. 
 * **Custom Data Contracts (Singular Tests):** Engineered advanced SQL tests to audit business logic (e.g., ensuring delivery dates always occur after purchase dates). Strategically configured financial discrepancy checks with `severity = 'warn'`. This ensures minor data anomalies (like sub-$2 float rounding differences) are flagged for the analytics team without hard-failing the automated CI/CD deployment.
 * **dbt Best Practices:** Eliminated lazy `SELECT *` queries. Introduced config blocks inside models for precise materialization control, and expanded the `sources.yml` definitions for robust lineage tracking.
 
+### 🕸️ dbt Lineage & Medallion Architecture
+![dbt Lineage Graph](assets/dbt-dag_v.png)
+
 ## 🧩 System Design Decisions & Trade-offs
 When upgrading to Version 2, several architectural choices were made to optimize for scalability, cost, and maintainability:
 
