@@ -105,32 +105,46 @@ This list perfectly sets expectations for anyone trying to reproduce your impres
 
 ## 🚀 How to Run this Project
 
-**1. Clone the repository**
+**Step 1. Clone the repository**
+
 ```bash
 git clone [https://github.com/GaniuKuku/ecommerce-data-engineering-project.git](https://github.com/GaniuKuku/ecommerce-data-engineering-project.git)
 cd ecommerce-data-engineering-project
 ```
 
 **Step 2: Set up GitHub Secrets & Variables**
+
 To allow GitHub Actions to securely build your infrastructure and containerize your code, go to your forked repository's Settings > Secrets and variables > Actions and add the following:
+
 Repository Secrets:
+
 GCP_CREDENTIALS: Your Google Cloud Service Account JSON key.
+
 Repository Variables:
+
 GCP_PROJECT_ID: Your exact GCP Project ID.
+
 GCP_REGION: e.g., us-central1.
+
 GCP_BUCKET_NAME: Your chosen globally unique Cloud Storage bucket name.
+
 GCP_DATASET_ID: Your BigQuery dataset name.
 
 **Step 3: Trigger the CI/CD Pipeline**
+
 Make any change to the codebase (or simply trigger a manual commit) and push to the main branch.
+
 ```bash
 git commit --allow-empty -m "trigger: initial pipeline delivery"
 git push origin main
 ```
 
 **Step 4: Verify the Delivery**
+
 Open the Actions tab in GitHub to watch the runner automatically test your Terraform plans, validate your dbt models, and build the Docker container.
+
 Once the pipeline turns green, log into Google Cloud Console.
+
 Navigate to Artifact Registry. You will see your production-ready Docker image (olist-pipeline:latest) safely stored and ready to be deployed to Cloud Run or triggered via an orchestrator (like Prefect) whenever a data run is required.
 
 
